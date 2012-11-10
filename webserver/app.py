@@ -1,15 +1,15 @@
-## AUTHOR: Tom Tang (tly1980@gmail.com)
-## License:  MIT
+"""
+AUTHOR: Tom Tang (tly1980@gmail.com)
+License:  MIT
 
-##############################################################
-##  SIMPLE TEST                                             ##
-##  cd md_renderer/webserver                                ##
-##  1. python app.py                                        ##
-##  2. python worker_mockup.py                              ##
-##  3. http -f POST localhost:8888/md md_src="hello word"   ##
-##                                                          ##
-##  p.s.: step3 require httpie, or you could use curl       ##
-###############################################################
+
+SIMPLE TEST
+cd md_renderer/webserver
+1. python app.py
+2. python worker_mockup.py
+3. http -f POST localhost:8888/md md_src="hello word"
+p.s.: step3 require httpie, or you could use curl
+"""
 
 import tornado.ioloop
 import tornado.web
@@ -28,7 +28,6 @@ ioloop.install()
 
 # init zmq context
 context = zmq.Context()
-#  Socket to talk to server
 # This web server would have both:
 # push (task distribution) and       -- MAP
 # pull (task result collection)      -- REDUCE
@@ -45,12 +44,14 @@ zstream_pull = ZMQStream(socket_pull)
 result_dict = {}
 
 
-############
-##  PULL  ##
-############
-
 def update_result(msg_list):
-# function to collect the result
+    """
+    for collecting the result
+    msg_list - the list containing the result.
+
+    PS: It may get more than one result.
+    So a loop is necessary.
+    """
     for msg in msg_list:
         m = json.loads(msg)
         result_dict[m['uuid']] = m
@@ -63,39 +64,45 @@ class MDHandler(tornado.web.RequestHandler):
     @asynchronous
     @gen.engine
     def post(self):
+        # key for this task
         self.result_key = str(uuid())
         self.result = None
 
+        # pack the task
         md_src = self.get_argument('md_src', None)
         msg = {
             'uuid': self.result_key,
             'md_src': md_src
         }
 
-        ############
-        ##  PUSH  ##
-        ############
-        # task format: {'uuid','md_src'}
-        # push the task in ASYN-Fashion.
-        # P.S. zstream send method provide the callback function already.
-        # So it would work properly with gen.Task.
+        """
+        Step1. PUSH
+        ===========
+        task format: {'uuid','md_src'}
+        push the task in ASYN-Fashion.
+        P.S. zstream send method provide the callback function already.
+        So it would work properly with gen.Task.
+        """
         yield gen.Task(zstream_push.send_unicode,
             json.dumps(msg))
 
-        #######################
-        ##  Pending on PULL  ##
-        #######################
-        # result format: {'uuid','md_src', 'html'}
+        """
+        Step2. Pending on PULL
+        ======================
+        result format: {'uuid','md_src', 'html'}
+        keep checking in ASYN-Fashion
+        """
         while not self.result:
-            # keep checking in ASYN-Fashion
             yield gen.Task(self.check_result)
 
         self.write(self.result['html'])
         self.finish()
 
-    # callback parameter is essential,
-    # as the make gen.Task work properly
     def check_result(self, callback=None):
+        """
+        callback parameter is essential,
+        as the make gen.Task work properly
+        """
         self.result = result_dict.get(self.result_key)
         tornado.ioloop.IOLoop.instance().add_callback(callback)
 
