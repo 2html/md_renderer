@@ -95,6 +95,9 @@ class MDHandler(tornado.web.RequestHandler):
         while not self.result:
             yield gen.Task(self.check_result)
 
+        """
+        Step3. Return the rendered result.
+        """
         self.write(self.result['html'])
         self.finish()
 
