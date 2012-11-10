@@ -1,0 +1,7 @@
+CONN_ADDR = 'tcp://localhost'
+BIND_ADDR = 'tcp://*'
+DIST_PORT = '5555'
+RESULT_PORT = '5556'
+
+SERVER_IP = '127.0.0.1'
+SERVER_PORT = 8888
