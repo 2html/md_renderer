@@ -1,0 +1,5 @@
+source 'http://rubygems.org'
+
+gem 'redcarpet'
+gem 'zmq'  # if fails at this step, please install zeromq first.
+gem 'rspec'
