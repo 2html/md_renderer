@@ -2,21 +2,25 @@ import tornado.ioloop
 import tornado.web
 from tornado.web import asynchronous
 from tornado import gen
-from settings import SERVER_IP, SERVER_PORT, BIND_ADDR, CONN_ADDR, DIST_PORT, RESULT_PORT
+from settings import SERVER_IP, SERVER_PORT, BIND_ADDR, DIST_PORT, RESULT_PORT
 from zmq.eventloop import ioloop
 from uuid import uuid4 as uuid
-ioloop.install()
-
-
 import zmq
 from zmq.eventloop.zmqstream import ZMQStream
 import simplejson as json
 
 
-context = zmq.Context()
 
+# This line are require to call before the tornado IOLoop being start
+# Explanation: http://zeromq.github.com/pyzmq/eventloop.html
+ioloop.install()
+
+# init zmq context
+context = zmq.Context()
 #  Socket to talk to server
-print "Connecting to hello world server..."
+# This web server would have both:
+# push (task distribution) and       -- MAP
+# pull (task result collection)      -- REDUCE
 socket_push = context.socket(zmq.PUSH)
 socket_push.bind(BIND_ADDR + ':' + DIST_PORT)
 socket_pull = context.socket(zmq.PULL)
@@ -26,14 +30,19 @@ socket_pull.bind(BIND_ADDR + ':' + RESULT_PORT)
 zstream_push = ZMQStream(socket_push)
 zstream_pull = ZMQStream(socket_pull)
 
+# global dictionary variable to collect the result
 result_dict = {}
 
 
+############
+##  PULL  ##
+############
+
 def update_result(msg_list):
+# function to collect the result
     for msg in msg_list:
         m = json.loads(msg)
         result_dict[m['uuid']] = m
-
 zstream_pull.on_recv(update_result)
 
 
@@ -52,15 +61,29 @@ class MDHandler(tornado.web.RequestHandler):
             'md_src': md_src
         }
 
+        ############
+        ##  PUSH  ##
+        ############
+        # task format: {'uuid','md_src'}
+        # push the task in ASYN-Fashion.
+        # P.S. zstream send method provide the callback function already.
+        # So it would work properly with gen.Task.
         yield gen.Task(zstream_push.send_unicode,
             json.dumps(msg))
 
+        #######################
+        ##  Pending on PULL  ##
+        #######################
+        # result format: {'uuid','md_src', 'html'}
         while not self.result:
+            # keep checking in ASYN-Fashion
             yield gen.Task(self.check_result)
 
-        self.write(json.dumps(self.result))
+        self.write(self.result['html'])
         self.finish()
 
+    # callback parameter is essential,
+    # as the make gen.Task work properly
     def check_result(self, callback=None):
         self.result = result_dict.get(self.result_key)
         tornado.ioloop.IOLoop.instance().add_callback(callback)

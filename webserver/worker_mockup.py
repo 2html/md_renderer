@@ -1,6 +1,6 @@
 import zmq
 from settings import RESULT_PORT, DIST_PORT, CONN_ADDR
-
+import simplejson as json
 
 context = zmq.Context()
 socket_pull = context.socket(zmq.PULL)
@@ -11,6 +11,8 @@ socket_pub.connect(CONN_ADDR + ':' + RESULT_PORT)
 
 while True:
     #  Wait for next request from client
-    message = socket_pull.recv()
-    print "Received request: ", message
-    socket_pub.send(message)
+    message = json.loads(socket_pull.recv())
+    # this is a mockup, just to provide a fake html retun
+    message['html'] = message['md_src']
+    print "message being send:", message
+    socket_pub.send(json.dumps(message))
