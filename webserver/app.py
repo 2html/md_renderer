@@ -49,12 +49,13 @@ def update_result(msg_list):
     for collecting the result
     msg_list - the list containing the result.
 
-    PS: It may get more than one result.
-    So a loop is necessary.
+    PS: loop is necessary, as it may get more than one result.
     """
     for msg in msg_list:
         m = json.loads(msg)
         result_dict[m['uuid']] = m
+
+# registering the callback
 zstream_pull.on_recv(update_result)
 
 
@@ -91,6 +92,10 @@ class MDHandler(tornado.web.RequestHandler):
         ======================
         result format: {'uuid','md_src', 'html'}
         keep checking in ASYN-Fashion
+
+        Considering moving this bit to a global PeriodicCallback.
+        So it does adding new check_result as a ioloop callback
+        for every request comes in.
         """
         while not self.result:
             yield gen.Task(self.check_result)
@@ -115,5 +120,4 @@ application = tornado.web.Application([
 
 if __name__ == "__main__":
     application.listen(SERVER_PORT, SERVER_IP)
-
     tornado.ioloop.IOLoop.instance().start()
