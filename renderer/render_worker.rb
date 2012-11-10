@@ -20,7 +20,7 @@ markdown.render("This is *bongos*, indeed.")
 loop do
   msg = inbound.recv
   task = JSON(msg)
-  task['html'] = markdown.render(task["md_src"])
+  task['html'] = markdown.render task["md_src"]
   outbound.send JSON(task)
 end
 
