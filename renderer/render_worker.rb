@@ -20,7 +20,8 @@ markdown.render("This is *bongos*, indeed.")
 loop do
   msg = inbound.recv
   task = JSON(msg)
-  task['html'] = markdown.render task["md_src"]
+  task['html'] = markdown.render task['src']
+  task['renderer'] = 'Redcarpet:' + Redcarpet::VERSION
   outbound.send JSON(task)
 end
 

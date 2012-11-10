@@ -13,6 +13,7 @@ while True:
     #  Wait for next request from client
     message = json.loads(socket_pull.recv())
     # this is a mockup, just to provide a fake html retun
-    message['html'] = message['md_src']
+    message['html'] = message['src']
+    message['renderer'] = 'echo mockup'
     print "message being send:", message
     socket_pub.send(json.dumps(message))
