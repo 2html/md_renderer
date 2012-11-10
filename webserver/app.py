@@ -29,9 +29,10 @@ zstream_pull = ZMQStream(socket_pull)
 result_dict = {}
 
 
-def update_result(msg):
-    ret = json.loads(msg[0])
-    result_dict[ret['uuid']] = ret
+def update_result(msg_list):
+    for msg in msg_list:
+        m = json.loads(msg)
+        result_dict[m['uuid']] = m
 
 zstream_pull.on_recv(update_result)
 
