@@ -1,3 +1,16 @@
+## AUTHOR: Tom Tang (tly1980@gmail.com)
+## License:  MIT
+
+##############################################################
+##  SIMPLE TEST                                             ##
+##  cd md_renderer/webserver                                ##
+##  1. python app.py                                        ##
+##  2. python worker_mockup.py                              ##
+##  3. http -f POST localhost:8888/md md_src="hello word"   ##
+##                                                          ##
+##  p.s.: step3 require httpie, or you could use curl       ##
+###############################################################
+
 import tornado.ioloop
 import tornado.web
 from tornado.web import asynchronous
@@ -8,8 +21,6 @@ from uuid import uuid4 as uuid
 import zmq
 from zmq.eventloop.zmqstream import ZMQStream
 import simplejson as json
-
-
 
 # This line are require to call before the tornado IOLoop being start
 # Explanation: http://zeromq.github.com/pyzmq/eventloop.html
