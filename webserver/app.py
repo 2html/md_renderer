@@ -91,7 +91,7 @@ class MDHandler(tornado.web.RequestHandler):
             json.dumps(msg))
 
         """
-        Step2. Pending on PULL
+        Step2. Waiting the result
         ======================
         result format: {'uuid','src', 'html'}
         keep checking in ASYN-Fashion
