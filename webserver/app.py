@@ -82,7 +82,7 @@ class MDHandler(tornado.web.RequestHandler):
         """
         Step1. PUSH
         ===========
-        task format: {'uuid','md_src'}
+        task format: {'uuid','src'}
         push the task in ASYN-Fashion.
         P.S. zstream send method provide the callback function already.
         So it would work properly with gen.Task.
@@ -93,7 +93,7 @@ class MDHandler(tornado.web.RequestHandler):
         """
         Step2. Pending on PULL
         ======================
-        result format: {'uuid','md_src', 'html'}
+        result format: {'uuid','src', 'html'}
         keep checking in ASYN-Fashion
 
         Considering moving this bit to a global PeriodicCallback.
