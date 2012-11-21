@@ -23,5 +23,6 @@ loop do
   task['html'] = markdown.render task['src']
   task['renderer'] = 'Redcarpet:' + Redcarpet::VERSION
   outbound.send JSON(task)
+  puts 'rendered: ' + task['html']
 end
 
