@@ -14,11 +14,16 @@ module.exports = function(grunt) {
           }
       }
     },
-    test: {
-      files: ['test/**/*.js']
+    simplemocha: {
+      all: {
+        src: 'test/**/*.js'
+      }
     },
+    // test: {
+    //   files: ['test/**/*.js']
+    // },
     lint: {
-      files: ['grunt.js', 'lib/**/*.js', 'test/**/*.js']
+      files: ['grunt.js', 'lib/**/*.js']
     },
     watch: {
       files: '<config:lint.files>',
@@ -45,8 +50,10 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-contrib-coffee');
-
+  grunt.loadNpmTasks('grunt-simple-mocha');
+  //grunt.renameTask('test','simplemocha');
+  grunt.registerTask('test', 'simplemocha');
   // Default task.
-  grunt.registerTask('default', 'coffee lint');
+  grunt.registerTask('default', 'coffee lint test');
 
 };
