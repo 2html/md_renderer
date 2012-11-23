@@ -3,15 +3,17 @@ request = require 'request'
 dispatcher = require '..'
 exec = require('child_process').exec
 assert = require 'assert'
-
+path = require 'path'
 renderer = undefined
 
 
 
+render_folder = path.resolve(__dirname, '../../renderer/')
+
 console.log('starting render')
 renderer = exec('bundle exec ruby render_worker.rb', 
     {
-        cwd: '../../renderer/'
+        cwd: render_folder
     },(err, stdout, stderr)->
      console.log('some error happened on starting render', err) if err
 )

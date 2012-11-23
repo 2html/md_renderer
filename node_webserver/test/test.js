@@ -1,7 +1,7 @@
 (function() {
   "use strict";
 
-  var assert, dispatcher, exec, port, renderer, request;
+  var assert, dispatcher, exec, path, port, render_folder, renderer, request;
 
   request = require('request');
 
@@ -11,12 +11,16 @@
 
   assert = require('assert');
 
+  path = require('path');
+
   renderer = void 0;
+
+  render_folder = path.resolve(__dirname, '../../renderer/');
 
   console.log('starting render');
 
   renderer = exec('bundle exec ruby render_worker.rb', {
-    cwd: '../../renderer/'
+    cwd: render_folder
   }, function(err, stdout, stderr) {
     if (err) {
       return console.log('some error happened on starting render', err);
