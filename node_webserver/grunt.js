@@ -9,8 +9,8 @@ module.exports = function(grunt) {
       },
       compile:{
           files:{
-            'lib/*.js':  ['lib/*.coffee'],
-            'test/*.js': ['test/*.coffee']
+            'lib/*.js':  'lib/*.coffee',
+            'test/*.js': 'test/*.coffee'
           }
       }
     },
