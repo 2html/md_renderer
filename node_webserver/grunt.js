@@ -19,9 +19,6 @@ module.exports = function(grunt) {
         src: 'test/**/*.js'
       }
     },
-    // test: {
-    //   files: ['test/**/*.js']
-    // },
     lint: {
       files: ['grunt.js', 'lib/**/*.js']
     },
@@ -51,7 +48,7 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-simple-mocha');
-  //grunt.renameTask('test','simplemocha');
+
   grunt.registerTask('test', 'simplemocha');
   // Default task.
   grunt.registerTask('default', 'coffee lint test');
