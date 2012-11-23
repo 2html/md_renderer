@@ -16,7 +16,7 @@ describe "md dispatcher", ()->
     ready_done = null
 
     inbound_ready.on 'message', (msg) ->
-        console.log('msg', msg)
+        console.log('md_render is ready to take order')
         ready_done()
 
     console.log 'starting render @:', render_folder, 'cmd:', cmd
@@ -36,14 +36,13 @@ describe "md dispatcher", ()->
     port = 0
     it 'should return the render result correctly', (done)->
         dispatcher.server.listen port, ()->
-            console.log "opened server on %j", dispatcher.server.address().port
+            console.log "dispatcher is listening@", dispatcher.server.address()
             r2 = request.post({
                     url:'http://localhost:' + dispatcher.server.address().port + '/md', 
                     form: {src: "*hello world*"}
                 } , 
                 (e, r, body)->
-                    #console.log('body:', body)
-                    assert.equal body, '<p><em>hello world</em></p>\n'
+                    assert.equal '<p><em>hello world</em></p>\n', body
                     done()
             )
 

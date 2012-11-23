@@ -24,7 +24,7 @@ server = http.createServer(app)
 results = {}
 
 sock_pull.on('message', (msg) ->
-    console.log('on msg')
+    #console.log('on msg')
     msg_obj = JSON.parse(msg)
     console.log('msg', msg_obj)
     r = results[msg_obj.id]
@@ -37,10 +37,10 @@ app.post('/md',
         id = uuid.v4()
         src = req.body.src
         results[id] = {id: id, res: res, src: src}
-        console.log('req.params', req.body.src, req.url)
+        #console.log('req.params', req.body.src, req.url)
         msg = JSON.stringify({id:id, src:src})
         sock_push.send(msg)
-        console.log('after send')
+        #console.log('after send')
 )
 
 app.get('/', 

@@ -35,7 +35,6 @@
 
   sock_pull.on('message', function(msg) {
     var msg_obj, r;
-    console.log('on msg');
     msg_obj = JSON.parse(msg);
     console.log('msg', msg_obj);
     r = results[msg_obj.id];
@@ -52,13 +51,11 @@
       res: res,
       src: src
     };
-    console.log('req.params', req.body.src, req.url);
     msg = JSON.stringify({
       id: id,
       src: src
     });
-    sock_push.send(msg);
-    return console.log('after send');
+    return sock_push.send(msg);
   });
 
   app.get('/', function(req, res) {

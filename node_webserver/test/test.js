@@ -16,7 +16,7 @@
     inbound_ready.bind('tcp://127.0.0.1:5557');
     ready_done = null;
     inbound_ready.on('message', function(msg) {
-      console.log('msg', msg);
+      console.log('md_render is ready to take order');
       return ready_done();
     });
     console.log('starting render @:', render_folder, 'cmd:', cmd);
@@ -40,14 +40,14 @@
     return it('should return the render result correctly', function(done) {
       return dispatcher.server.listen(port, function() {
         var r2;
-        console.log("opened server on %j", dispatcher.server.address().port);
+        console.log("dispatcher is listening@", dispatcher.server.address());
         return r2 = request.post({
           url: 'http://localhost:' + dispatcher.server.address().port + '/md',
           form: {
             src: "*hello world*"
           }
         }, function(e, r, body) {
-          assert.equal(body, '<p><em>hello world</em></p>\n');
+          assert.equal('<p><em>hello world</em></p>\n', body);
           return done();
         });
       });
