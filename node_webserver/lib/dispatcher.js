@@ -1,13 +1,15 @@
 (function() {
   "use strict";
 
-  var ADDR, RESULT_PORT, TASK_PORT, app, express, results, sock_pull, sock_push, uuid, zmq;
+  var ADDR, RESULT_PORT, TASK_PORT, app, express, http, results, server, sock_pull, sock_push, uuid, zmq;
 
   express = require('express');
 
   zmq = require('zmq');
 
   uuid = require('node-uuid');
+
+  http = require('http');
 
   ADDR = 'tcp://127.0.0.1';
 
@@ -26,6 +28,8 @@
   app = express();
 
   app.use(express.bodyParser());
+
+  server = http.createServer(app);
 
   results = {};
 
@@ -62,6 +66,8 @@
   });
 
   exports.app = app;
+
+  exports.server = server;
 
   exports.results = results;
 

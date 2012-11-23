@@ -3,6 +3,7 @@
 express = require 'express'
 zmq = require 'zmq'
 uuid = require 'node-uuid'
+http = require 'http'
 
 ADDR = 'tcp://127.0.0.1'
 TASK_PORT = '5555'
@@ -17,6 +18,8 @@ sock_pull.bind(ADDR + ':' + RESULT_PORT)
 
 app = express()
 app.use(express.bodyParser())
+
+server = http.createServer(app)
 
 results = {}
 
@@ -46,6 +49,7 @@ app.get('/',
 )
  
 exports.app = app
+exports.server = server
 exports.results = results
 #app.listen 3000
 

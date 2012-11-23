@@ -5,7 +5,7 @@
 
   d = require('..');
 
-  d.app.listen(3000, function() {
+  d.server.listen(3000, function() {
     return console.log('on callback');
   });
 
