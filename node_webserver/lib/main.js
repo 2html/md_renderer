@@ -6,7 +6,7 @@
   d = require('..');
 
   d.server.listen(3000, function() {
-    return console.log('on callback');
+    return console.log('Server is running on: ', d.server.address());
   });
 
 }).call(this);
