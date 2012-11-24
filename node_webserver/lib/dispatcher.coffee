@@ -13,8 +13,8 @@ RESULT_PORT = '5556'
 sock_push = zmq.socket('push')
 sock_pull = zmq.socket('pull')
 
-sock_push.bind(ADDR + ':' + TASK_PORT)
-sock_pull.bind(ADDR + ':' + RESULT_PORT)
+sock_push.bindSync(ADDR + ':' + TASK_PORT)
+sock_pull.bindSync(ADDR + ':' + RESULT_PORT)
 
 app = express()
 app.use(express.bodyParser())
@@ -28,7 +28,11 @@ sock_pull.on('message', (msg) ->
     msg_obj = JSON.parse(msg)
     console.log('msg', msg_obj)
     r = results[msg_obj.id]
+    res = r.res
+    console.log 'before res.finished', res.finished
     r.res.end(msg_obj.html)
+    console.log('preparing to delete', msg_obj.id)
+    console.log 'after res.finished', res.finished
     delete results[msg_obj.id]
 );
 
@@ -40,6 +44,7 @@ app.post('/md',
         #console.log('req.params', req.body.src, req.url)
         msg = JSON.stringify({id:id, src:src})
         sock_push.send(msg)
+        console.log 'res.finished', res.finished
         #console.log('after send')
 )
 

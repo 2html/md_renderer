@@ -21,9 +21,9 @@
 
   sock_pull = zmq.socket('pull');
 
-  sock_push.bind(ADDR + ':' + TASK_PORT);
+  sock_push.bindSync(ADDR + ':' + TASK_PORT);
 
-  sock_pull.bind(ADDR + ':' + RESULT_PORT);
+  sock_pull.bindSync(ADDR + ':' + RESULT_PORT);
 
   app = express();
 
@@ -34,11 +34,15 @@
   results = {};
 
   sock_pull.on('message', function(msg) {
-    var msg_obj, r;
+    var msg_obj, r, res;
     msg_obj = JSON.parse(msg);
     console.log('msg', msg_obj);
     r = results[msg_obj.id];
+    res = r.res;
+    console.log('before res.finished', res.finished);
     r.res.end(msg_obj.html);
+    console.log('preparing to delete', msg_obj.id);
+    console.log('after res.finished', res.finished);
     return delete results[msg_obj.id];
   });
 
@@ -55,7 +59,8 @@
       id: id,
       src: src
     });
-    return sock_push.send(msg);
+    sock_push.send(msg);
+    return console.log('res.finished', res.finished);
   });
 
   app.get('/', function(req, res) {
